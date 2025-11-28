@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:go_router/go_router.dart';
 
 final storage = FlutterSecureStorage();
 
@@ -22,8 +23,13 @@ class _MainPageState extends State<MainPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
-          // TODO: 검색 화면으로 이동 구현
-          IconButton(onPressed: () {}, icon: Icon(Icons.search), iconSize: 56),
+          IconButton(
+            onPressed: () {
+              context.push("/book/search");
+            },
+            icon: Icon(Icons.search),
+            iconSize: 48,
+          ),
         ],
       ),
       body: Center(
@@ -42,8 +48,9 @@ class _MainPageState extends State<MainPage> {
             Spacer(flex: 1),
 
             TextButton(
-              // TODO: 로그인 화면으로 이동 구현
-              onPressed: () {},
+              onPressed: () {
+                context.push("/login");
+              },
               child: Text(
                 '로그인',
                 style: TextStyle(
@@ -59,8 +66,9 @@ class _MainPageState extends State<MainPage> {
             SizedBox(height: 8),
 
             TextButton(
-              // TODO: 회원가입 화면으로 이동 구현
-              onPressed: () {},
+              onPressed: () {
+                context.push("/signup");
+              },
               child: Text(
                 '회원가입',
                 style: TextStyle(
