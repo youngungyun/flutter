@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rebook/models/auth/login_request.dart';
+import 'package:rebook/dto/auth/login_request.dart';
 import 'package:rebook/services/auth_service.dart';
 import 'package:supabase/supabase.dart';
 
@@ -26,6 +26,7 @@ class _LoginFormState extends State<LoginForm> {
     _authService = widget.authService;
   }
 
+  // TODO: 스낵바 생성하는 부분 모듈로 분리 고려
   void _showErrorSnackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -52,6 +53,7 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
+  // TODO: 부모 위젯에서 콜백 형식으로 처리. 폼(UI)과 로직 모듈 분리
   Future<void> submit() async {
     setState(() {
       _isLoading = true;
@@ -71,7 +73,7 @@ class _LoginFormState extends State<LoginForm> {
         });
         return;
       }
-      context.pop(true);
+      context.pop();
       _showSuccessSnakbar("로그인이 완료되었습니다.");
     } on AuthException {
       _showErrorSnackbar("이메일 또는 비밀번호가 잘못되었습니다.");
@@ -82,6 +84,7 @@ class _LoginFormState extends State<LoginForm> {
     }
   }
 
+  // TODO: TextFormFiled 모듈화
   @override
   Widget build(BuildContext context) {
     final Color onSurface = Theme.of(context).colorScheme.onSurface;

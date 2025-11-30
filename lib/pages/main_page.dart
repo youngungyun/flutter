@@ -17,18 +17,27 @@ class _MainPageState extends State<MainPage> {
   String _nickname =
       Supabase.instance.client.auth.currentUser?.userMetadata?['nickname'];
 
-  Future<void> logout(BuildContext context) async {
+  /// 로그아웃 메서드
+  /// 로컬에서 세션 삭제 후 flag 변경
+  Future<void> _logout(BuildContext context) async {
     Supabase.instance.client.auth.signOut(scope: SignOutScope.local);
 
     if (!mounted) {
       return;
     }
 
+    _refreshLoginState();
+  }
+
+  void _refreshLoginState() {
     setState(() {
-      _isLoggedIn = false;
+      _isLoggedIn = Supabase.instance.client.auth.currentSession != null;
+      _nickname =
+          Supabase.instance.client.auth.currentUser?.userMetadata?['nickname'];
     });
   }
 
+  // TODO: 로그인 상태 위젯과 비로그인 상태 위젯 분리
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,7 +119,7 @@ class _MainPageState extends State<MainPage> {
                       ),
                     ),
                     TextButton(
-                      onPressed: () => logout(context),
+                      onPressed: () => _logout(context),
                       child: Text(
                         '로그아웃',
                         style: TextStyle(
@@ -127,19 +136,8 @@ class _MainPageState extends State<MainPage> {
             ] else ...[
               TextButton(
                 onPressed: () async {
-                  final result = await context.push("/login");
-                  if (result == true) {
-                    setState(() {
-                      _isLoggedIn =
-                          Supabase.instance.client.auth.currentSession != null;
-                      _nickname = Supabase
-                          .instance
-                          .client
-                          .auth
-                          .currentUser
-                          ?.userMetadata?['nickname'];
-                    });
-                  }
+                  context.push("/login");
+                  _refreshLoginState();
                 },
                 child: Text(
                   '로그인',
@@ -154,19 +152,8 @@ class _MainPageState extends State<MainPage> {
 
               TextButton(
                 onPressed: () async {
-                  final result = await context.push("/signup");
-                  if (result == true) {
-                    setState(() {
-                      _isLoggedIn =
-                          Supabase.instance.client.auth.currentSession != null;
-                      _nickname = Supabase
-                          .instance
-                          .client
-                          .auth
-                          .currentUser
-                          ?.userMetadata?['nickname'];
-                    });
-                  }
+                  await context.push("/signup");
+                  _refreshLoginState();
                 },
                 child: Text(
                   '회원가입',

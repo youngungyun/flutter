@@ -2,7 +2,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rebook/exceptions/registered_email_exception.dart';
-import 'package:rebook/models/auth/signup_request.dart';
+import 'package:rebook/dto/auth/signup_request.dart';
 import 'package:rebook/services/auth_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -32,6 +32,7 @@ class _SignupFormState extends State<SignupForm> {
     _formKey = widget._formKey;
   }
 
+  // TODO: Validation 모듈로 분리
   String? validateEmail(String? value) {
     if (value == null || value.isEmpty) {
       return "이메일을 입력하세요.";
@@ -75,6 +76,7 @@ class _SignupFormState extends State<SignupForm> {
     return null;
   }
 
+  // TODO: 스낵바 생성하는 부분 모듈로 분리 고려
   void _showErrorSnackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -101,6 +103,7 @@ class _SignupFormState extends State<SignupForm> {
     );
   }
 
+  // TODO: 부모 위젯에서 콜백 형식으로 처리. 폼(UI)과 로직 모듈 분리
   Future<void> submit() async {
     setState(() {
       _isLoading = true;
@@ -143,7 +146,7 @@ class _SignupFormState extends State<SignupForm> {
         });
         return;
       }
-      context.pop(true);
+      context.pop();
       _showSuccessSnakbar("회원가입이 완료되었습니다.");
     } on RegisteredEmailException {
       _showErrorSnackbar("이미 존재하는 이메일입니다.");
@@ -156,6 +159,7 @@ class _SignupFormState extends State<SignupForm> {
     }
   }
 
+  // TODO: TextFormFiled 모듈화
   @override
   Widget build(BuildContext context) {
     final Color onSurface = Theme.of(context).colorScheme.onSurface;
