@@ -10,7 +10,7 @@ class AppRouter {
     routes: [
       GoRoute(path: "/", builder: (_, __) => const MainPage()),
       GoRoute(path: "/login", builder: (_, __) => const LoginPage()),
-      GoRoute(path: "/signup", builder: (_, __) => const SignupPage()),
+      GoRoute(path: "/signup", builder: (_, __) => SignupPage()),
       GoRoute(path: "/book/search", builder: (_, __) => const BookSearchPage()),
     ],
   );
