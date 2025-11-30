@@ -39,6 +39,7 @@ dependencies:
   supabase: ^2.10.0
   supabase_flutter: ^2.10.3
   flutter_dotenv: ^6.0.0
+  email_validator: ^3.0.0
 
 dev_dependencies:
   flutter_test:
