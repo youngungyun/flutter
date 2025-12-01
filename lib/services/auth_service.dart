@@ -5,7 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 var _logger = Logger();
 
-/// 유저 정보 관련 서비스 클래스
+/// 유저 정보 로직 처리 서비스
 class AuthService {
   static final AuthService instance = AuthService._internal();
 
