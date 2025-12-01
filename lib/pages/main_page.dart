@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rebook/widgets/common/logged_in_widget.dart';
+import 'package:rebook/widgets/common/logged_out_widget.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final storage = FlutterSecureStorage();
@@ -22,9 +24,17 @@ class _MainPageState extends State<MainPage> {
     _refreshLoginState();
   }
 
-  /// 로그아웃 메서드
-  /// 로컬에서 세션 삭제 후 flag 변경
-  Future<void> _logout(BuildContext context) async {
+  Future<void> _onLogin() async {
+    await context.push("/login");
+    _refreshLoginState();
+  }
+
+  Future<void> _onSignup() async {
+    await context.push("/signup");
+    _refreshLoginState();
+  }
+
+  Future<void> _onLogout() async {
     Supabase.instance.client.auth.signOut(scope: SignOutScope.local);
 
     if (!mounted) {
@@ -35,6 +45,10 @@ class _MainPageState extends State<MainPage> {
   }
 
   void _refreshLoginState() {
+    if (!mounted) {
+      return;
+    }
+
     setState(() {
       _isLoggedIn = Supabase.instance.client.auth.currentSession != null;
       _nickname =
@@ -71,8 +85,7 @@ class _MainPageState extends State<MainPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Spacer(flex: 2),
-
+            SizedBox(height: 120),
             Text(
               'ReBook',
               style: TextStyle(
@@ -89,93 +102,12 @@ class _MainPageState extends State<MainPage> {
               ),
             ),
 
-            Spacer(flex: 1),
-
             // 로그인 상태
             if (_isLoggedIn) ...[
-              Text(
-                _nickname,
-                style: TextStyle(
-                  fontSize: 60,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
-              ),
-              TextButton(
-                // TODO: 내가 읽은 책 목록 페이지 구현
-                onPressed: () {},
-                child: Text(
-                  '내가 읽은 책',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-              ),
-              Spacer(flex: 4),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 30),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    TextButton(
-                      // TODO: 회원 정보 수정 페이지 이동 구현
-                      onPressed: () {},
-                      child: Text(
-                        '회원 정보 수정',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () => _logout(context),
-                      child: Text(
-                        '로그아웃',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
+              LoggedInWidget(nickname: _nickname, onLogout: _onLogout),
               // 비 로그인 상태
             ] else ...[
-              TextButton(
-                onPressed: () async {
-                  await context.push("/login");
-                  _refreshLoginState();
-                },
-                child: Text(
-                  '로그인',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-              ),
-
-              SizedBox(height: 8),
-
-              TextButton(
-                onPressed: () async {
-                  await context.push("/signup");
-                  _refreshLoginState();
-                },
-                child: Text(
-                  '회원가입',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                ),
-              ),
-
-              Spacer(flex: 4),
+              LoggedOutWidget(onLogin: _onLogin, onSignup: _onSignup),
             ],
           ],
         ),
