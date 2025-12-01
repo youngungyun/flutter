@@ -32,50 +32,6 @@ class _SignupFormState extends State<SignupForm> {
     _formKey = widget._formKey;
   }
 
-  // TODO: Validation 모듈로 분리
-  String? validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return "이메일을 입력하세요.";
-    }
-    if (!EmailValidator.validate(value)) {
-      return "올바른 이메일 양식이 아닙니다.";
-    }
-    return null;
-  }
-
-  String? validateNickname(String? value) {
-    if (value == null || value.isEmpty) {
-      return "닉네임을 입력하세요.";
-    }
-    if (value.length < 3) {
-      return "닉네임이 너무 짧습니다.";
-    }
-    if (value.length > 16) {
-      return "닉네임이 너무 깁니다.";
-    }
-    return null;
-  }
-
-  String? validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return "비밀번호를 입력하세요.";
-    }
-    if (value.length < 8) {
-      return "비밀번호가 너무 짧습니다.";
-    }
-    if (value.length > 16) {
-      return "비밀번호가 너무 깁니다.";
-    }
-    return null;
-  }
-
-  String? validateRepeatPassword(String? value) {
-    if (value != passwordController.text) {
-      return "비밀번호가 일치하지 않습니다.";
-    }
-    return null;
-  }
-
   // TODO: 스낵바 생성하는 부분 모듈로 분리 고려
   void _showErrorSnackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -186,7 +142,7 @@ class _SignupFormState extends State<SignupForm> {
               errorStyle: errorStyle,
             ),
             keyboardType: TextInputType.emailAddress,
-            validator: validateEmail,
+            validator: SignupValidator.validateEmail,
             textInputAction: TextInputAction.next,
             onSaved: (value) {
               _email = value ?? '';
@@ -206,7 +162,7 @@ class _SignupFormState extends State<SignupForm> {
               errorStyle: errorStyle,
             ),
             keyboardType: TextInputType.text,
-            validator: validateNickname,
+            validator: SignupValidator.validateNickname,
             textInputAction: TextInputAction.next,
             onSaved: (value) {
               _nickname = value ?? '';
@@ -228,7 +184,7 @@ class _SignupFormState extends State<SignupForm> {
             ),
             keyboardType: TextInputType.text,
             obscureText: true,
-            validator: validatePassword,
+            validator: SignupValidator.validatePassword,
             textInputAction: TextInputAction.next,
             onSaved: (value) {
               _password = value ?? '';
@@ -249,7 +205,10 @@ class _SignupFormState extends State<SignupForm> {
             ),
             keyboardType: TextInputType.text,
             obscureText: true,
-            validator: validateRepeatPassword,
+            validator: (value) => SignupValidator.validateRepeatPassword(
+              value,
+              passwordController.text,
+            ),
             textInputAction: TextInputAction.next,
           ),
           Spacer(flex: 1),
@@ -278,5 +237,50 @@ class _SignupFormState extends State<SignupForm> {
         ],
       ),
     );
+  }
+}
+
+class SignupValidator {
+  static String? validateEmail(String? email) {
+    if (email == null || email.isEmpty) {
+      return "이메일을 입력하세요.";
+    }
+    if (!EmailValidator.validate(email)) {
+      return "올바른 이메일 양식이 아닙니다.";
+    }
+    return null;
+  }
+
+  static String? validateNickname(String? nickname) {
+    if (nickname == null || nickname.isEmpty) {
+      return "닉네임을 입력하세요.";
+    }
+    if (nickname.length < 3) {
+      return "닉네임이 너무 짧습니다.";
+    }
+    if (nickname.length > 16) {
+      return "닉네임이 너무 깁니다.";
+    }
+    return null;
+  }
+
+  static String? validatePassword(String? password) {
+    if (password == null || password.isEmpty) {
+      return "비밀번호를 입력하세요.";
+    }
+    if (password.length < 8) {
+      return "비밀번호가 너무 짧습니다.";
+    }
+    if (password.length > 16) {
+      return "비밀번호가 너무 깁니다.";
+    }
+    return null;
+  }
+
+  static String? validateRepeatPassword(String? repeat, String origin) {
+    if (repeat != origin) {
+      return "비밀번호가 일치하지 않습니다.";
+    }
+    return null;
   }
 }
