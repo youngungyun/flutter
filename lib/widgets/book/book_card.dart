@@ -35,9 +35,7 @@ class BookCard extends StatelessWidget {
                   top: 15.0,
                   bottom: 15.0,
                 ),
-                child: book.thumbnailUrl == null
-                    ? null
-                    : Image.network(book.thumbnailUrl!),
+                child: Image.network(book.thumbnailUrl),
               ),
               Expanded(
                 child: Column(
@@ -54,7 +52,7 @@ class BookCard extends StatelessWidget {
                     Text(book.authors.join(',')),
                     Text(book.publisher),
                     Text(book.isbn),
-                    Text(DateFormat('yyyy-MM-dd').format(book.publishDate!)),
+                    Text(DateFormat('yyyy-MM-dd').format(book.publishDate)),
                   ],
                 ),
               ),

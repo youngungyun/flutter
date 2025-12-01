@@ -5,6 +5,7 @@ class BookResult {
   BookResult({required this.books, required this.metadata});
 }
 
+/// 카카오 API 응답의 본문
 /// isbn은 isbn13이 없을 경우에만 isbn10 사용
 class BookResponse {
   final String title;
@@ -12,16 +13,16 @@ class BookResponse {
   final List<String> translators;
   final String publisher;
   final String isbn;
-  final DateTime? publishDate;
-  final String? thumbnailUrl;
+  final DateTime publishDate;
+  final String thumbnailUrl;
   const BookResponse({
     required this.title,
     required this.authors,
     required this.translators,
     required this.publisher,
     required this.isbn,
-    this.publishDate,
-    this.thumbnailUrl,
+    required this.publishDate,
+    required this.thumbnailUrl,
   });
 
   factory BookResponse.fromJson(Map<String, dynamic> json) {
@@ -37,6 +38,7 @@ class BookResponse {
   }
 }
 
+/// 카카오 API 응답의 메타 데이터 부분
 class Metadata {
   final int totalCount;
   final int pageableCount;
