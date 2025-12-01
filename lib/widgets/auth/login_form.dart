@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rebook/dto/auth/login_request.dart';
 import 'package:rebook/services/auth_service.dart';
+import 'package:rebook/utils/snackbar_util.dart';
 import 'package:supabase/supabase.dart';
 
 class LoginForm extends StatefulWidget {
@@ -26,33 +27,6 @@ class _LoginFormState extends State<LoginForm> {
     _authService = widget.authService;
   }
 
-  // TODO: 스낵바 생성하는 부분 모듈로 분리 고려
-  void _showErrorSnackbar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: TextStyle(color: Theme.of(context).colorScheme.onError),
-        ),
-        backgroundColor: Theme.of(context).colorScheme.error,
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
-
-  void _showSuccessSnakbar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-        ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
-
   // TODO: 부모 위젯에서 콜백 형식으로 처리. 폼(UI)과 로직 모듈 분리
   Future<void> submit() async {
     setState(() {
@@ -74,9 +48,9 @@ class _LoginFormState extends State<LoginForm> {
         return;
       }
       context.pop();
-      _showSuccessSnakbar("로그인이 완료되었습니다.");
+      SnackbarUtil.showSuccess(context, "로그인이 완료되었습니다.");
     } on AuthException {
-      _showErrorSnackbar("이메일 또는 비밀번호가 잘못되었습니다.");
+      SnackbarUtil.showError(context, "이메일 또는 비밀번호가 잘못되었습니다.");
     } finally {
       setState(() {
         _isLoading = false;

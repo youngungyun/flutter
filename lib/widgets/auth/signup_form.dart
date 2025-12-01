@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rebook/exceptions/registered_email_exception.dart';
 import 'package:rebook/dto/auth/signup_request.dart';
 import 'package:rebook/services/auth_service.dart';
+import 'package:rebook/utils/snackbar_util.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SignupForm extends StatefulWidget {
@@ -32,33 +33,6 @@ class _SignupFormState extends State<SignupForm> {
     _formKey = widget._formKey;
   }
 
-  // TODO: 스낵바 생성하는 부분 모듈로 분리 고려
-  void _showErrorSnackbar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: TextStyle(color: Theme.of(context).colorScheme.onError),
-        ),
-        backgroundColor: Theme.of(context).colorScheme.error,
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
-
-  void _showSuccessSnakbar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-        ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
-
   // TODO: 부모 위젯에서 콜백 형식으로 처리. 폼(UI)과 로직 모듈 분리
   Future<void> submit() async {
     setState(() {
@@ -76,7 +50,7 @@ class _SignupFormState extends State<SignupForm> {
     try {
       final isAvailable = await _authService.isNicknameAvailable(_nickname);
       if (!isAvailable) {
-        _showErrorSnackbar("이미 존재하는 닉네임입니다.");
+        SnackbarUtil.showError(context, "이미 존재하는 닉네임입니다.");
         setState(() {
           _isLoading = false;
         });
@@ -86,7 +60,7 @@ class _SignupFormState extends State<SignupForm> {
       setState(() {
         _isLoading = false;
       });
-      _showErrorSnackbar("예외 발생. 다시 시도해주세요.");
+      SnackbarUtil.showError(context, "예외 발생. 다시 시도해주세요.");
     }
 
     final SignupRequest request = SignupRequest(
@@ -103,11 +77,11 @@ class _SignupFormState extends State<SignupForm> {
         return;
       }
       context.pop();
-      _showSuccessSnakbar("회원가입이 완료되었습니다.");
+      SnackbarUtil.showSuccess(context, "회원가입이 완료되었습니다.");
     } on RegisteredEmailException {
-      _showErrorSnackbar("이미 존재하는 이메일입니다.");
+      SnackbarUtil.showError(context, "이미 존재하는 이메일입니다.");
     } on AuthApiException {
-      _showErrorSnackbar("예외가 발생했습니다. 다시 시도해 주세요.");
+      SnackbarUtil.showError(context, "예외가 발생했습니다. 다시 시도해 주세요.");
     } finally {
       setState(() {
         _isLoading = false;
