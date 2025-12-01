@@ -13,9 +13,14 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  bool _isLoggedIn = Supabase.instance.client.auth.currentSession != null;
-  String _nickname =
-      Supabase.instance.client.auth.currentUser?.userMetadata?['nickname'];
+  bool _isLoggedIn = false;
+  String _nickname = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshLoginState();
+  }
 
   /// 로그아웃 메서드
   /// 로컬에서 세션 삭제 후 flag 변경
@@ -33,7 +38,13 @@ class _MainPageState extends State<MainPage> {
     setState(() {
       _isLoggedIn = Supabase.instance.client.auth.currentSession != null;
       _nickname =
-          Supabase.instance.client.auth.currentUser?.userMetadata?['nickname'];
+          Supabase
+              .instance
+              .client
+              .auth
+              .currentUser
+              ?.userMetadata?['nickname'] ??
+          '';
     });
   }
 
@@ -136,7 +147,7 @@ class _MainPageState extends State<MainPage> {
             ] else ...[
               TextButton(
                 onPressed: () async {
-                  context.push("/login");
+                  await context.push("/login");
                   _refreshLoginState();
                 },
                 child: Text(
