@@ -72,12 +72,15 @@ class _MainPageState extends State<MainPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
-          IconButton(
-            onPressed: () {
-              context.push("/book/search");
-            },
-            icon: Icon(Icons.search),
-            iconSize: 48,
+          Padding(
+            padding: const EdgeInsets.only(right: 5.0),
+            child: IconButton(
+              onPressed: () {
+                context.push("/book/search");
+              },
+              icon: Icon(Icons.search),
+              iconSize: 48,
+            ),
           ),
         ],
       ),
