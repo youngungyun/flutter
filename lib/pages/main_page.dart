@@ -62,7 +62,6 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
-  // TODO: 로그인 상태 위젯과 비로그인 상태 위젯 분리
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class LoggedOutWidget extends StatelessWidget {
   final Future<void> Function() _onLogin;
