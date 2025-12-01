@@ -1,24 +1,28 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:rebook/exceptions/registered_email_exception.dart';
 import 'package:rebook/dto/auth/signup_request.dart';
 import 'package:rebook/services/auth_service.dart';
-import 'package:rebook/utils/snackbar_util.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SignupForm extends StatefulWidget {
   final AuthService authService = AuthService.instance;
   final _formKey = GlobalKey<FormState>();
 
-  SignupForm({super.key});
+  final Function(BuildContext, String) _onSuccess;
+  final Function(BuildContext, String) _onError;
+
+  SignupForm({
+    super.key,
+    required dynamic Function(BuildContext, String) onSuccess,
+    required dynamic Function(BuildContext, String) onError,
+  }) : _onError = onError,
+       _onSuccess = onSuccess;
 
   @override
   State<StatefulWidget> createState() => _SignupFormState();
 }
 
 class _SignupFormState extends State<SignupForm> {
-  final passwordController = TextEditingController();
+  final _passwordController = TextEditingController();
   late final AuthService _authService;
   late final GlobalKey<FormState> _formKey;
   String _email = '';
@@ -33,7 +37,12 @@ class _SignupFormState extends State<SignupForm> {
     _formKey = widget._formKey;
   }
 
-  // TODO: 부모 위젯에서 콜백 형식으로 처리. 폼(UI)과 로직 모듈 분리
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   Future<void> submit() async {
     setState(() {
       _isLoading = true;
@@ -47,45 +56,33 @@ class _SignupFormState extends State<SignupForm> {
     }
     _formKey.currentState!.save();
 
-    try {
-      final isAvailable = await _authService.isNicknameAvailable(_nickname);
-      if (!isAvailable) {
-        SnackbarUtil.showError(context, "이미 존재하는 닉네임입니다.");
-        setState(() {
-          _isLoading = false;
-        });
-        return;
-      }
-    } on Exception {
-      setState(() {
-        _isLoading = false;
-      });
-      SnackbarUtil.showError(context, "예외 발생. 다시 시도해주세요.");
-    }
-
     final SignupRequest request = SignupRequest(
       email: _email,
       nickname: _nickname,
       password: _password,
     );
-    try {
-      await _authService.signup(request);
-      if (!mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-        return;
-      }
-      context.pop();
-      SnackbarUtil.showSuccess(context, "회원가입이 완료되었습니다.");
-    } on RegisteredEmailException {
-      SnackbarUtil.showError(context, "이미 존재하는 이메일입니다.");
-    } on AuthApiException {
-      SnackbarUtil.showError(context, "예외가 발생했습니다. 다시 시도해 주세요.");
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
+
+    SignupResult result = await _authService.signup(request);
+    setState(() {
+      _isLoading = false;
+    });
+    if (!mounted) {
+      return;
+    }
+
+    switch (result) {
+      case SignupResult.success:
+        widget._onSuccess(context, "회원가입이 완료되었습니다.");
+        break;
+      case SignupResult.duplicateNickname:
+        widget._onError(context, "이미 존재하는 닉네임입니다.");
+        break;
+      case SignupResult.duplicateEmail:
+        widget._onError(context, "이미 가입된 이메일입니다.");
+        break;
+      case SignupResult.error:
+        widget._onError(context, "예외가 발생했습니다. 다시 시도해 주세요.");
+        break;
     }
   }
 
@@ -145,7 +142,7 @@ class _SignupFormState extends State<SignupForm> {
           Spacer(flex: 1),
 
           TextFormField(
-            controller: passwordController,
+            controller: _passwordController,
             style: TextStyle(color: onSurface),
             decoration: InputDecoration(
               labelText: '비밀번호',
@@ -181,9 +178,9 @@ class _SignupFormState extends State<SignupForm> {
             obscureText: true,
             validator: (value) => SignupValidator.validateRepeatPassword(
               value,
-              passwordController.text,
+              _passwordController.text,
             ),
-            textInputAction: TextInputAction.next,
+            textInputAction: TextInputAction.go,
           ),
           Spacer(flex: 1),
 

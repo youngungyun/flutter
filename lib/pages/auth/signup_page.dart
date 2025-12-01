@@ -1,9 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rebook/utils/snackbar_util.dart';
 import 'package:rebook/widgets/auth/signup_form.dart';
 import 'package:rebook/widgets/common/cusom_app_bar.dart';
 
 class SignupPage extends StatelessWidget {
   const SignupPage({super.key});
+
+  void onSuccess(BuildContext context, String message) {
+    context.pop();
+    SnackbarUtil.showSuccess(context, message);
+  }
+
+  void onError(BuildContext context, String message) {
+    SnackbarUtil.showError(context, message);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +22,7 @@ class SignupPage extends StatelessWidget {
       appBar: CustomAppBar(title: "회원가입"),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: SignupForm(),
+        child: SignupForm(onSuccess: onSuccess, onError: onError),
       ),
     );
   }

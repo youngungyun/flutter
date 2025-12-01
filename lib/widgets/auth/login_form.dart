@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:rebook/dto/auth/login_request.dart';
 import 'package:rebook/services/auth_service.dart';
-import 'package:rebook/utils/snackbar_util.dart';
-import 'package:supabase/supabase.dart';
 
 class LoginForm extends StatefulWidget {
   final AuthService authService = AuthService.instance;
   final _formKey = GlobalKey<FormState>();
 
-  LoginForm({super.key});
+  final Function(BuildContext, String) _onSuccess;
+  final Function(BuildContext, String) _onError;
+
+  LoginForm({
+    super.key,
+    required dynamic Function(BuildContext, String) onSuccess,
+    required dynamic Function(BuildContext, String) onError,
+  }) : _onError = onError,
+       _onSuccess = onSuccess;
 
   @override
   State<StatefulWidget> createState() => _LoginFormState();
@@ -27,7 +32,6 @@ class _LoginFormState extends State<LoginForm> {
     _authService = widget.authService;
   }
 
-  // TODO: 부모 위젯에서 콜백 형식으로 처리. 폼(UI)과 로직 모듈 분리
   Future<void> submit() async {
     setState(() {
       _isLoading = true;
@@ -39,22 +43,21 @@ class _LoginFormState extends State<LoginForm> {
       password: _password,
     );
 
-    try {
-      await _authService.login(request);
-      if (!mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-        return;
-      }
-      context.pop();
-      SnackbarUtil.showSuccess(context, "로그인이 완료되었습니다.");
-    } on AuthException {
-      SnackbarUtil.showError(context, "이메일 또는 비밀번호가 잘못되었습니다.");
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
+    LoginResult result = await _authService.login(request);
+    setState(() {
+      _isLoading = false;
+    });
+    if (!mounted) {
+      return;
+    }
+
+    switch (result) {
+      case LoginResult.success:
+        widget._onSuccess(context, "로그인이 성공했습니다.");
+        break;
+      case LoginResult.failure:
+        widget._onError(context, "이메일 또는 비밀번호가 일치하지 않습니다.");
+        break;
     }
   }
 
@@ -104,7 +107,7 @@ class _LoginFormState extends State<LoginForm> {
             ),
             keyboardType: TextInputType.text,
             obscureText: true,
-            textInputAction: TextInputAction.next,
+            textInputAction: TextInputAction.go,
 
             onSaved: (value) {
               _password = value ?? '';
