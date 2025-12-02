@@ -24,16 +24,18 @@ class BookService {
 
   Future<BookResult> search(BookRequest request) async {
     final String query = request.query;
-    final String sort = request.sortType.label;
+    final String sort = request.sortType.name;
     final String page = request.page.toString();
     final String size = request.size.toString();
-    final String target = request.searchType.label;
+    final String target = request.searchType.name;
 
     final url = Uri.parse(
       '$base?query=$query&sort=$sort&page=$page&size=$size&target=$target',
     );
 
-    _logger.i("request: $url");
+    _logger.i(
+      "request: $base?query=$query&sort=$sort&page=$page&size=$size&target=$target",
+    );
 
     final response = await http.post(
       url,
@@ -55,7 +57,7 @@ class BookService {
 
     Metadata metadata = Metadata.fromJson(json['meta']);
 
-    _logger.i("response to $query");
+    _logger.i("response to query: $query");
 
     return BookResult(books: books, metadata: metadata);
   }

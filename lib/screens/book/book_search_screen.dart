@@ -6,6 +6,7 @@ import 'package:rebook/widgets/book/book_card.dart';
 import 'package:rebook/widgets/book/book_sort_type_selector.dart';
 import 'package:rebook/widgets/book/search_type_selector.dart';
 import 'package:rebook/widgets/common/cusom_app_bar.dart';
+import 'package:rebook/widgets/common/scroll_floating_action.dart';
 
 class BookSearchScreen extends StatefulWidget {
   final BookService bookService = BookService.instance;
@@ -16,6 +17,9 @@ class BookSearchScreen extends StatefulWidget {
 }
 
 class _BookSearchScreenState extends State<BookSearchScreen> {
+  final ScrollController _scrollController = ScrollController();
+  bool _showScrollToTop = false;
+
   bool _isLoading = false;
   final int _size = 20;
   final _searchController = TextEditingController();
@@ -24,10 +28,31 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
   SortType _sortType = SortType.accurcy;
   List<BookResponse> _books = [];
 
+  // 플로팅 버튼 생성 여부
+  void _onScroll() {
+    if (_scrollController.offset >= 300 && !_showScrollToTop) {
+      setState(() {
+        _showScrollToTop = true;
+      });
+    } else if (_scrollController.offset < 300 && _showScrollToTop) {
+      setState(() {
+        _showScrollToTop = false;
+      });
+    }
+  }
+
   void onChangeSearchType(SearchType type) {
     setState(() {
       _searchType = type;
     });
+  }
+
+  void _scrollToTop() {
+    _scrollController.animateTo(
+      0,
+      duration: Duration(microseconds: 700),
+      curve: Curves.easeInOut,
+    );
   }
 
   void onChangeSortType(SortType type) {
@@ -64,9 +89,24 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(title: "도서 검색"),
+      floatingActionButton: _showScrollToTop
+          ? ScrollFloatingAction(onPressed: _scrollToTop)
+          : null,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -119,11 +159,8 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
                   3. 받은 응답을 books의 끝에 추가
                   3-2. isEnd가 true면 더 이상 같이 없음. 스크롤 이벤트 끄고 마지막을 표시하는 위젯 넣음
                   */
-                  /*
-                  스크롤이 너무 길 때 최상단으로 이동시키는 버튼
-                  FloatingActionButton으로 구현하기
-                  */
                   child: ListView.builder(
+                    controller: _scrollController,
                     padding: EdgeInsets.symmetric(
                       horizontal: 15.0,
                       vertical: 10.0,
