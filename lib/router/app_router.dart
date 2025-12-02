@@ -4,6 +4,7 @@ import 'package:rebook/screens/book/book_search_screen.dart';
 import 'package:rebook/screens/auth/login_screen.dart';
 import 'package:rebook/screens/main_screen.dart';
 import 'package:rebook/screens/auth/signup_screen.dart';
+import 'package:rebook/screens/review/review_write_screen.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -18,6 +19,13 @@ class AppRouter {
         builder: (_, state) {
           final String? isbn = state.pathParameters['isbn'];
           return BookDetailsScreen(isbn: isbn!);
+        },
+      ),
+      GoRoute(
+        path: "/review/write",
+        builder: (_, state) {
+          final String isbn = state.extra as String;
+          return ReviewWriteScreen(isbn: isbn);
         },
       ),
     ],

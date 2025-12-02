@@ -5,8 +5,8 @@ class BookDetails {
   final List<String> translators;
   final String isbn;
   final String publisher;
-  final DateTime publishDate;
-  final String thumbnailUrl;
+  final DateTime datetime;
+  final String thumbnail;
   final String? bookId;
 
   BookDetails({
@@ -16,8 +16,8 @@ class BookDetails {
     required this.translators,
     required this.publisher,
     required this.isbn,
-    required this.publishDate,
-    required this.thumbnailUrl,
+    required this.datetime,
+    required this.thumbnail,
     this.bookId,
   });
 
@@ -28,8 +28,8 @@ class BookDetails {
       authors: json['authors'].cast<String>(),
       translators: json['translators'].cast<String>(),
       publisher: json['publisher'],
-      thumbnailUrl: json['thumbnail'],
-      publishDate: DateTime.parse(json['datetime']),
+      thumbnail: json['thumbnail'],
+      datetime: DateTime.parse(json['datetime']),
       isbn: (json['isbn'] as String).split(' ').last,
       bookId: json['book_id'],
     );

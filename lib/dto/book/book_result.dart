@@ -13,16 +13,17 @@ class BookResponse {
   final List<String> translators;
   final String publisher;
   final String isbn;
-  final DateTime publishDate;
-  final String thumbnailUrl;
+  final DateTime datetime;
+  final String thumbnail;
+
   const BookResponse({
     required this.title,
     required this.authors,
     required this.translators,
     required this.publisher,
     required this.isbn,
-    required this.publishDate,
-    required this.thumbnailUrl,
+    required this.datetime,
+    required this.thumbnail,
   });
 
   factory BookResponse.fromJson(Map<String, dynamic> json) {
@@ -31,8 +32,8 @@ class BookResponse {
       authors: json['authors'].cast<String>(),
       translators: json['translators'].cast<String>(),
       publisher: json['publisher'],
-      thumbnailUrl: json['thumbnail'],
-      publishDate: DateTime.parse(json['datetime']),
+      thumbnail: json['thumbnail'],
+      datetime: DateTime.parse(json['datetime']),
       isbn: (json['isbn'] as String).split(' ').last,
     );
   }
