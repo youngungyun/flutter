@@ -11,8 +11,8 @@ class LoginForm extends StatefulWidget {
 
   LoginForm({
     super.key,
-    required dynamic Function(BuildContext, String) onSuccess,
-    required dynamic Function(BuildContext, String) onError,
+    required void Function(BuildContext, String) onSuccess,
+    required void Function(BuildContext, String) onError,
   }) : _onError = onError,
        _onSuccess = onSuccess;
 
@@ -88,6 +88,7 @@ class _LoginFormState extends State<LoginForm> {
             ),
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
+            textCapitalization: TextCapitalization.none,
             onSaved: (value) {
               _email = value ?? '';
             },
@@ -107,7 +108,7 @@ class _LoginFormState extends State<LoginForm> {
             keyboardType: TextInputType.text,
             obscureText: true,
             textInputAction: TextInputAction.go,
-
+            textCapitalization: TextCapitalization.none,
             onSaved: (value) {
               _password = value ?? '';
             },

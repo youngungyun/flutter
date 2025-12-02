@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rebook/widgets/common/logged_in_widget.dart';
 import 'package:rebook/widgets/common/logged_out_widget.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
-final storage = FlutterSecureStorage();
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});

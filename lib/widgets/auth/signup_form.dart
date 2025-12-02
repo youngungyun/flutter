@@ -12,8 +12,8 @@ class SignupForm extends StatefulWidget {
 
   SignupForm({
     super.key,
-    required dynamic Function(BuildContext, String) onSuccess,
-    required dynamic Function(BuildContext, String) onError,
+    required void Function(BuildContext, String) onSuccess,
+    required void Function(BuildContext, String) onError,
   }) : _onError = onError,
        _onSuccess = onSuccess;
 
@@ -137,6 +137,7 @@ class _SignupFormState extends State<SignupForm> {
             onSaved: (value) {
               _nickname = value ?? '';
             },
+            textCapitalization: TextCapitalization.none,
           ),
           Spacer(flex: 1),
 
@@ -159,6 +160,7 @@ class _SignupFormState extends State<SignupForm> {
             onSaved: (value) {
               _password = value ?? '';
             },
+            textCapitalization: TextCapitalization.none,
           ),
           Spacer(flex: 1),
 
@@ -180,6 +182,7 @@ class _SignupFormState extends State<SignupForm> {
               _passwordController.text,
             ),
             textInputAction: TextInputAction.go,
+            textCapitalization: TextCapitalization.none,
           ),
           Spacer(flex: 1),
 

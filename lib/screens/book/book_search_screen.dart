@@ -194,6 +194,8 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
                       hintText: "검색어를 입력하세요.",
                       prefixIcon: Icon(Icons.search),
                     ),
+                    textInputAction: TextInputAction.send,
+                    textCapitalization: TextCapitalization.none,
                   ),
                 ),
                 ElevatedButton(
@@ -231,7 +233,7 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
                     scrollDirection: Axis.vertical,
                     itemCount: _books.length,
                     itemBuilder: (context, index) =>
-                        BookCard(book: _books[index]),
+                        BookCard(key: ValueKey(index), book: _books[index]),
                   ),
                 ),
           if (_isLoadingMore)

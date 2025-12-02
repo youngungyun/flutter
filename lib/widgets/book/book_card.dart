@@ -36,7 +36,7 @@ class BookCard extends StatelessWidget {
                   bottom: 15.0,
                 ),
                 child: BookImage(
-                  imageUrl: book.thumbnailUrl,
+                  imageUrl: book.thumbnail,
                   imageWidth: 120,
                   imageHeight: 174,
                 ),
@@ -56,7 +56,7 @@ class BookCard extends StatelessWidget {
                     Text('${book.authors.join(', ')} 지음'),
                     Text(book.publisher),
                     Text(book.isbn),
-                    Text(DateFormat('yyyy-MM-dd').format(book.publishDate)),
+                    Text(DateFormat('yyyy-MM-dd').format(book.datetime)),
                   ],
                 ),
               ),
