@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
+import 'package:rebook/dto/book/book_details.dart';
 import 'package:rebook/dto/book/book_request.dart';
 import 'package:rebook/dto/book/book_result.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -22,6 +23,7 @@ class BookService {
 
   BookService._internal();
 
+  /// 도서 검색
   Future<BookResult> search(BookRequest request) async {
     final String query = request.query;
     final String sort = request.sortType.name;
@@ -29,13 +31,12 @@ class BookService {
     final String size = request.size.toString();
     final String target = request.searchType.name;
 
-    final url = Uri.parse(
-      '$base?query=$query&sort=$sort&page=$page&size=$size&target=$target',
-    );
+    String completedUrl =
+        '$base?query=$query&sort=$sort&page=$page&size=$size&target=$target';
 
-    _logger.i(
-      "request: $base?query=$query&sort=$sort&page=$page&size=$size&target=$target",
-    );
+    final url = Uri.parse(completedUrl);
+
+    _logger.i(completedUrl);
 
     final response = await http.post(
       url,
@@ -60,6 +61,61 @@ class BookService {
     _logger.i("response to query: $query");
 
     return BookResult(books: books, metadata: metadata);
+  }
+
+  /// 먼저 DB에 해당 도서 레코드가 있는지 검색
+  /// 없으면 카카오 API로 도서 정보 찾아옴
+  Future<BookDetails> getDetails(String isbn) async {
+    final String sort = SortType.accurcy.name;
+    final String page = '1';
+    final String size = '1';
+    final String target = SearchType.isbn.name;
+    final String query = isbn;
+
+    // DB에 해당 도서 정보 있으면 그대로 리턴
+    final BookDetails? bookDetaulsFromDB = await _findByIsbn(isbn);
+    if (bookDetaulsFromDB != null) {
+      return bookDetaulsFromDB;
+    }
+
+    // 없으면 카카오 API로 가져옴
+    String completedUrl =
+        '$base?query=$query&sort=$sort&page=$page&size=$size&target=$target';
+
+    final url = Uri.parse(completedUrl);
+
+    _logger.i(completedUrl);
+
+    final response = await http.post(
+      url,
+      headers: {"Authorization": 'KakaoAK $apiKey'},
+    );
+
+    // 정상적인 응답 아님
+    if (response.statusCode != 200) {
+      _logger.w('Response: $response.statusCode: $response.reasonPhrase');
+      throw HttpException("incorrect response");
+    }
+
+    Map<String, dynamic> json = jsonDecode(response.body);
+
+    _logger.i("Can't find details of book: $query");
+
+    return BookDetails.fromJson(json['documents'][0]);
+  }
+
+  Future<BookDetails?> _findByIsbn(String isbn) async {
+    _logger.i("Find book details: $isbn");
+
+    try {
+      final response = await _supabase.from('book').select().maybeSingle();
+      if (response == null) {
+        return null;
+      }
+      return BookDetails.fromJson(response);
+    } on AuthException {
+      return null;
+    }
   }
 }
 
