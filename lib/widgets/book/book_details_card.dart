@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:rebook/dto/book/book_details.dart';
+import 'package:rebook/widgets/book/book_image.dart';
 
 class BookDetailsCard extends StatelessWidget {
   final BookDetails bookDetails;
@@ -35,7 +36,11 @@ class BookDetailsCard extends StatelessWidget {
                       left: 10.0,
                       right: 20.0,
                     ),
-                    child: Image.network(bookDetails.thumbnailUrl),
+                    child: BookImage(
+                      imageUrl: bookDetails.thumbnailUrl,
+                      imageWidth: 120,
+                      imageHeight: 174,
+                    ),
                   ),
                   Expanded(
                     child: Column(

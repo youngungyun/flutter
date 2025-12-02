@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:rebook/dto/book/book_result.dart';
+import 'package:rebook/widgets/book/book_image.dart';
 
 class BookCard extends StatelessWidget {
   final BookResponse book;
@@ -37,7 +38,11 @@ class BookCard extends StatelessWidget {
                   top: 15.0,
                   bottom: 15.0,
                 ),
-                child: Image.network(book.thumbnailUrl),
+                child: BookImage(
+                  imageUrl: book.thumbnailUrl,
+                  imageWidth: 120,
+                  imageHeight: 174,
+                ),
               ),
               Expanded(
                 child: Column(
