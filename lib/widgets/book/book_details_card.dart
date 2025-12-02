@@ -33,7 +33,7 @@ class BookDetailsCard extends StatelessWidget {
                       right: 20.0,
                     ),
                     child: BookImage(
-                      imageUrl: bookDetails.thumbnailUrl,
+                      imageUrl: bookDetails.thumbnail,
                       imageWidth: 120,
                       imageHeight: 174,
                     ),
@@ -46,27 +46,42 @@ class BookDetailsCard extends StatelessWidget {
                         Text(
                           bookDetails.title,
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 10.0),
-                        Text('${bookDetails.authors.join(', ')} 지음'),
+                        SizedBox(height: 8.0),
+                        Text(
+                          '${bookDetails.authors.join(', ')} 지음',
+                          style: TextStyle(fontSize: 16),
+                        ),
                         bookDetails.translators.isEmpty
                             ? const SizedBox.shrink()
-                            : Text('${bookDetails.translators.join(', ')} 번역'),
-                        Text(bookDetails.isbn),
-                        Text(bookDetails.publisher),
+                            : Text(
+                                '${bookDetails.translators.join(', ')} 번역',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                        Text(bookDetails.isbn, style: TextStyle(fontSize: 16)),
                         Text(
-                          DateFormat(
-                            'yyyy-MM-dd',
-                          ).format(bookDetails.publishDate),
+                          bookDetails.publisher,
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        Text(
+                          DateFormat('yyyy-MM-dd').format(bookDetails.datetime),
                         ),
                       ],
                     ),
                   ),
                 ],
               ),
+              Padding(
+                padding: const EdgeInsets.only(top: 10.0, bottom: 5.0),
+                child: Text(
+                  "도서 내용",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                ),
+              ),
+              Text(bookDetails.contents, style: TextStyle(fontSize: 16)),
             ],
           ),
         ),

@@ -77,7 +77,6 @@ class BookService {
     if (bookDetaulsFromDB != null) {
       return bookDetaulsFromDB;
     }
-
     // 없으면 카카오 API로 가져옴
     String completedUrl =
         '$base?query=$query&sort=$sort&page=$page&size=$size&target=$target';
@@ -86,35 +85,70 @@ class BookService {
 
     _logger.i(completedUrl);
 
-    final response = await http.post(
-      url,
-      headers: {"Authorization": 'KakaoAK $apiKey'},
-    );
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Authorization": 'KakaoAK $apiKey'},
+      );
+      // 정상적인 응답 아님
+      if (response.statusCode != 200) {
+        _logger.w('Response: $response.statusCode: $response.reasonPhrase');
+        throw HttpException("incorrect response");
+      }
 
-    // 정상적인 응답 아님
-    if (response.statusCode != 200) {
-      _logger.w('Response: $response.statusCode: $response.reasonPhrase');
-      throw HttpException("incorrect response");
+      Map<String, dynamic> json = jsonDecode(response.body);
+
+      _logger.i("Find details of book: $query");
+
+      return BookDetails.fromJson(json['documents'][0]);
+    } on Exception catch (e) {
+      _logger.e("Can't find book: ${e.toString()}");
+      rethrow;
     }
-
-    Map<String, dynamic> json = jsonDecode(response.body);
-
-    _logger.i("Can't find details of book: $query");
-
-    return BookDetails.fromJson(json['documents'][0]);
   }
 
   Future<BookDetails?> _findByIsbn(String isbn) async {
     _logger.i("Find book details: $isbn");
 
     try {
-      final response = await _supabase.from('book').select().maybeSingle();
+      final response = await _supabase
+          .from('book')
+          .select()
+          .eq('isbn', isbn)
+          .maybeSingle();
       if (response == null) {
         return null;
       }
       return BookDetails.fromJson(response);
-    } on AuthException {
+    } on AuthException catch (e) {
+      _logger.e("Can't find by ISBN: ${e.message}");
       return null;
+    }
+  }
+
+  Future<String> insertBook(BookDetails book) async {
+    try {
+      _logger.i("Insert book: ${book.title}");
+
+      final response = await _supabase
+          .from('book')
+          .upsert({
+            'title': book.title,
+            'authors': book.authors,
+            'translators': book.translators,
+            'contents': book.contents,
+            'isbn': book.isbn,
+            'publisher': book.publisher,
+            'datetime': book.datetime.toIso8601String(),
+            'thumbnail': book.thumbnail,
+          }, onConflict: 'isbn')
+          .select('book_id')
+          .single();
+
+      return response['book_id'];
+    } on AuthException catch (e) {
+      _logger.e("Book insert error: ${e.message}");
+      rethrow;
     }
   }
 }
