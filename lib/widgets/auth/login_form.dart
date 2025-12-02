@@ -117,6 +117,7 @@ class _LoginFormState extends State<LoginForm> {
             onPressed: _isLoading ? null : submit,
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
             ),
             child: _isLoading
                 ? CircularProgressIndicator(
@@ -125,13 +126,7 @@ class _LoginFormState extends State<LoginForm> {
                       Theme.of(context).colorScheme.onPrimary,
                     ),
                   )
-                : Text(
-                    "로그인",
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      fontSize: 16,
-                    ),
-                  ),
+                : Text("로그인", style: TextStyle(fontSize: 16)),
           ),
           Spacer(flex: 2),
         ],

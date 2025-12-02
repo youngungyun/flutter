@@ -187,6 +187,7 @@ class _SignupFormState extends State<SignupForm> {
             onPressed: _isLoading ? null : submit,
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
             ),
             child: _isLoading
                 ? CircularProgressIndicator(
@@ -195,13 +196,7 @@ class _SignupFormState extends State<SignupForm> {
                       Theme.of(context).colorScheme.onPrimary,
                     ),
                   )
-                : Text(
-                    "회원가입",
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      fontSize: 16,
-                    ),
-                  ),
+                : Text("회원가입", style: TextStyle(fontSize: 16)),
           ),
           Spacer(flex: 2),
         ],
