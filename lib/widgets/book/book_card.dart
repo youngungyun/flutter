@@ -17,16 +17,13 @@ class BookCard extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.all(4.0),
-      child: GestureDetector(
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10.0),
         onTap: onTap,
         child: Card(
           color: Theme.of(context).colorScheme.surfaceContainer,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
-            side: BorderSide(
-              color: Theme.of(context).colorScheme.surfaceContainerHighest,
-              width: 2.0,
-            ),
           ),
           elevation: 3.0,
           child: Row(
