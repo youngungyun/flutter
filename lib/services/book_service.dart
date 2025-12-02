@@ -151,6 +151,19 @@ class BookService {
       rethrow;
     }
   }
+
+  Future<List<BookResponse>> findReadBooks(String userId) async {
+    _logger.i("Find read books: $userId");
+
+    final response = await _supabase
+        .from('read_book')
+        .select()
+        .eq('user_id', userId)
+        .select('*, book!inner(*)')
+        .order('created_at', ascending: false);
+
+    return response.map((book) => BookResponse.fromJson(book)).toList();
+  }
 }
 
 enum SearchType {

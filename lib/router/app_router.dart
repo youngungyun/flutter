@@ -1,7 +1,9 @@
 import 'package:go_router/go_router.dart';
+import 'package:rebook/screens/auth/profile_screen.dart';
 import 'package:rebook/screens/book/book_details_screen.dart';
 import 'package:rebook/screens/book/book_search_screen.dart';
 import 'package:rebook/screens/auth/login_screen.dart';
+import 'package:rebook/screens/book/read_book_screen.dart';
 import 'package:rebook/screens/main_screen.dart';
 import 'package:rebook/screens/auth/signup_screen.dart';
 import 'package:rebook/screens/review/review_write_screen.dart';
@@ -28,6 +30,8 @@ class AppRouter {
           return ReviewWriteScreen(isbn: isbn);
         },
       ),
+      GoRoute(path: "/read-book", builder: (_, __) => ReadBookScreen()),
+      GoRoute(path: "/profile", builder: (_, __) => ProfileScreen()),
     ],
   );
 }

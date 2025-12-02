@@ -25,7 +25,8 @@ class ReviewService {
     final response = await _supabase
         .from('review')
         .select('*, book!inner(isbn), profile(nickname)')
-        .eq('book.isbn', isbn);
+        .eq('book.isbn', isbn)
+        .order('created_at', ascending: false);
 
     return response.map((review) {
       return ReviewResponse.fromJson(review);

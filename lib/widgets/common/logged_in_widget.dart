@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class LoggedInWidget extends StatelessWidget {
   final String _nickname;
@@ -24,8 +25,9 @@ class LoggedInWidget extends StatelessWidget {
           ),
         ),
         TextButton(
-          // TODO: 내가 읽은 책 목록 페이지 구현
-          onPressed: () {},
+          onPressed: () {
+            context.push("/read-book");
+          },
           child: Text(
             '내가 읽은 책',
             style: TextStyle(
@@ -41,8 +43,9 @@ class LoggedInWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               TextButton(
-                // TODO: 회원 정보 수정 페이지 이동 구현
-                onPressed: () {},
+                onPressed: () {
+                  context.push("/profile");
+                },
                 child: Text(
                   '회원 정보 수정',
                   style: TextStyle(

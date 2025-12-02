@@ -156,7 +156,6 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                 if (reviews.isEmpty) {
                   return Text("리뷰가 없습니다!", style: TextStyle(fontSize: 16));
                 }
-                // TODO: ReviewCard 구현하여 넣기
                 return ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
