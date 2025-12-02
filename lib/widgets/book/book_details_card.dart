@@ -15,10 +15,6 @@ class BookDetailsCard extends StatelessWidget {
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
-          side: BorderSide(
-            color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            width: 2.0,
-          ),
         ),
         elevation: 3.0,
         child: Padding(
