@@ -76,11 +76,17 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
     });
     String query = _searchController.text.trim();
     if (query.isEmpty) {
+      SnackbarUtil.showError(context, '검색어를 입력해주세요.');
       return;
     }
 
+    setState(() {
+      _showScrollToTop = false;
+    });
+
     // 로딩 시작
     setState(() {
+      _books = [];
       _isLoading = true;
     });
 
@@ -194,6 +200,7 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
                   onPressed: _isLoading ? null : onSearch,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
                   ),
                   child: Text(
                     "검색",
