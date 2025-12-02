@@ -16,7 +16,7 @@ class AppRouter {
       GoRoute(
         path: "/book/:isbn",
         builder: (_, state) {
-          final isbn = state.pathParameters['isbn'];
+          final String? isbn = state.pathParameters['isbn'];
           return BookDetailsScreen(isbn: isbn!);
         },
       ),
