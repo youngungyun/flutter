@@ -30,7 +30,7 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
   SortType _sortType = SortType.accurcy;
   List<BookResponse> _books = [];
 
-  // 플로팅 버튼 생성 여부
+  /// 플로팅 버튼 생성 여부를 정하는 메서드
   void _onScroll() {
     bool shouldShow = _scrollController.offset >= 300;
     if (shouldShow != _showScrollToTop) {
@@ -55,6 +55,7 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
     });
   }
 
+  /// 플로팅 액션을 눌렀을 때 스크롤을 최상단으로 올려주는 메서드
   void _scrollToTop() {
     _scrollController.animateTo(
       0,
@@ -112,6 +113,7 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
     }
   }
 
+  /// 스크롤 끝까지 도달 시 추가 도서 검색
   Future<void> findMoreBooks() async {
     setState(() {
       _isLoadingMore = true;
