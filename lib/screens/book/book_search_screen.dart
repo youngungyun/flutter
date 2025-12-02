@@ -39,6 +39,10 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
       });
     }
 
+    if (_isEnd) {
+      return;
+    }
+
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       findMoreBooks();
