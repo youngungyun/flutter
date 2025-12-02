@@ -11,21 +11,23 @@ class BookCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     void onTap() {
-      context.push("/book/$book.isbn");
+      context.push("/book/${book.isbn}");
     }
 
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(4.0),
       child: GestureDetector(
         onTap: onTap,
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            ),
+        child: Card(
+          color: Theme.of(context).colorScheme.surfaceContainer,
+          shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
-            color: Theme.of(context).colorScheme.surfaceContainer,
+            side: BorderSide(
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+              width: 2.0,
+            ),
           ),
+          elevation: 3.0,
           child: Row(
             children: [
               Padding(
@@ -39,17 +41,17 @@ class BookCard extends StatelessWidget {
               ),
               Expanded(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       book.title,
                       style: TextStyle(
-                        fontSize: 22,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text(book.authors.join(',')),
+                    Text('${book.authors.join(', ')} 지음'),
                     Text(book.publisher),
                     Text(book.isbn),
                     Text(DateFormat('yyyy-MM-dd').format(book.publishDate)),
