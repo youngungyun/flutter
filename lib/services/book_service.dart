@@ -7,6 +7,7 @@ import 'package:logger/logger.dart';
 import 'package:rebook/dto/book/book_details.dart';
 import 'package:rebook/dto/book/book_request.dart';
 import 'package:rebook/dto/book/book_result.dart';
+import 'package:rebook/dto/book/check_response.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 var _logger = Logger();
@@ -107,6 +108,8 @@ class BookService {
     }
   }
 
+  /// isbn으로 DB에서 도서를 찾음
+  /// 없거나 예외 발생 시 null 리턴
   Future<BookDetails?> _findByIsbn(String isbn) async {
     _logger.i("Find book details: $isbn");
 
@@ -152,17 +155,84 @@ class BookService {
     }
   }
 
+  /// 내가 읽은 책들 조회하는 메서드
   Future<List<BookResponse>> findReadBooks(String userId) async {
     _logger.i("Find read books: $userId");
 
-    final response = await _supabase
-        .from('read_book')
-        .select()
-        .eq('user_id', userId)
-        .select('*, book!inner(*)')
-        .order('created_at', ascending: false);
+    try {
+      final response = await _supabase
+          .from('read_book')
+          .select('*, book!inner(*)')
+          .eq('user_id', userId)
+          .order('created_at', ascending: false);
+      return response
+          .map((book) => BookResponse.fromJson(book['book']))
+          .toList();
+    } on Exception catch (e) {
+      _logger.e("읽은 책 조회 중 예외 발생: ${e.toString()}");
+      return List.empty();
+    }
+  }
 
-    return response.map((book) => BookResponse.fromJson(book)).toList();
+  /// isbn로 DB에 대한 도서 있는지 확인
+  /// 없으면 우선 DB에 도서 등록
+  /// 이후 읽은 책 테이블에 있는지 확인
+  /// Returns:
+  ///   책이 체크되어 있으면 bookId, true
+  ///   체크되어 있지 않으면 bookId, false
+  ///   예외 발생 시 null, false
+  ///
+  Future<CheckResponse> findCheckState(String userId, String isbn) async {
+    BookDetails? book = await getDetails(isbn);
+
+    String bookId = book.bookId ?? await insertBook(book);
+    _logger.i("Find a book: $bookId");
+
+    try {
+      final int response = await _supabase
+          .from('read_book')
+          .count()
+          .eq('user_id', userId)
+          .eq('book_id', bookId)
+          .timeout(const Duration(seconds: 10));
+
+      _logger.i("리뷰 확인: $userId : $bookId");
+      return CheckResponse(bookId: bookId, isChecked: response == 1);
+    } on AuthException catch (e) {
+      _logger.e("리뷰 확인 중 예외 발생: ${e.message}");
+      return CheckResponse(bookId: null, isChecked: false);
+    }
+  }
+
+  Future<void> insertCheck({
+    required String bookId,
+    required String userId,
+  }) async {
+    _logger.i("Start insert check");
+    try {
+      await _supabase.from('read_book').insert({
+        'book_id': bookId,
+        'user_id': userId,
+      });
+    } on Exception catch (e) {
+      _logger.e("Insert check error: ${e.toString()}");
+    }
+  }
+
+  Future<void> deleteCheck({
+    required String bookId,
+    required String userId,
+  }) async {
+    _logger.i("Start delete check");
+    try {
+      await _supabase
+          .from('read_book')
+          .delete()
+          .eq('book_id', bookId)
+          .eq('user_id', userId);
+    } on Exception catch (e) {
+      _logger.e("Delete check error: ${e.toString()}");
+    }
   }
 }
 

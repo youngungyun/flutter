@@ -44,7 +44,10 @@ class _ReadBookScreenState extends State<ReadBookScreen> {
               future: widget.bookService.findReadBooks(_userId),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
                 }
 
                 if (snapshot.hasError || !snapshot.hasData) {
