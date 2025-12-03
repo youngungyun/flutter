@@ -53,7 +53,7 @@ class _LoginFormState extends State<LoginForm> {
 
     switch (result) {
       case LoginResult.success:
-        widget._onSuccess(context, "로그인이 성공했습니다.");
+        widget._onSuccess(context, "로그인 되었습니다.");
         break;
       case LoginResult.failure:
         widget._onError(context, "이메일 또는 비밀번호가 일치하지 않습니다.");

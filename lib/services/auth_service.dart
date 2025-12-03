@@ -24,7 +24,7 @@ class AuthService {
     final String password = request.password;
 
     try {
-      if (!await _isNicknameAvailable(nickname)) {
+      if (!await isNicknameAvailable(nickname)) {
         return SignupResult.duplicateNickname;
       }
     } on AuthException {
@@ -71,7 +71,7 @@ class AuthService {
   /// Returns:
   /// * 해당 닉네임을 사용 가능하면 true
   /// * 이미 존재하는 닉네임이면 false
-  Future<bool> _isNicknameAvailable(String nickname) async {
+  Future<bool> isNicknameAvailable(String nickname) async {
     try {
       final int response = await _supabase
           .from('profile')
@@ -82,6 +82,19 @@ class AuthService {
     } on Exception catch (e) {
       _logger.e(e);
       rethrow;
+    }
+  }
+
+  Future<bool> changeNickname(String userId, String newNickname) async {
+    try {
+      _logger.i("닉네임 변경: $userId");
+      await Supabase.instance.client.auth.updateUser(
+        UserAttributes(data: {'nickname': newNickname}),
+      );
+      return true;
+    } on Exception catch (e) {
+      _logger.e("닉네임 변경 중 예외 발생: ${e.toString()}");
+      return false;
     }
   }
 }
