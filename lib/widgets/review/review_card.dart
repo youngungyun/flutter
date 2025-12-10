@@ -28,7 +28,7 @@ class ReviewCard extends StatelessWidget {
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
                       fontWeight: FontWeight.bold,
-                      fontSize: 22,
+                      fontSize: 20,
                     ),
                   ),
                   Row(
@@ -52,7 +52,7 @@ class ReviewCard extends StatelessWidget {
                         minRating: 1.0,
                         maxRating: 5.0,
                         initialRating: review.rating,
-                        itemSize: 28.0,
+                        itemSize: 26.0,
                       ),
                     ],
                   ),
